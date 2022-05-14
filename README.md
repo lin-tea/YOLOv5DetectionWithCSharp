@@ -47,6 +47,9 @@
   ```python
     >>>labelimg data/images/train classes.txt
   ```
+  可以看见如下图，选择标签格式为yolo，保存路径为 data/labels/train，标签，cost time
+  ![images](https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/labeling.png)
+  
 ## 3. yolo模型
 
 ## 4. 训练 & 推理
