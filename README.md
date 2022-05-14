@@ -8,11 +8,11 @@
 
 ---
 **目录：**
-- [数据采集](https://github.com/lin-tea/Yolo-detection-In-C-/edit/main/README.md#1-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86)
-- [数据集制作](https://github.com/lin-tea/Yolo-detection-In-C-/edit/main/README.md#2-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%88%B6%E4%BD%9C)
-- [yolo模型](https://github.com/lin-tea/Yolo-detection-In-C-/edit/main/README.md#3-yolo%E6%A8%A1%E5%9E%8B)
-- [训练 & 推理](https://github.com/lin-tea/Yolo-detection-In-C-/edit/main/README.md#4-%E8%AE%AD%E7%BB%83--%E6%8E%A8%E7%90%86)
-- [导出onnx模型](https://github.com/lin-tea/Yolo-detection-In-C-/edit/main/README.md#5-%E5%AF%BC%E5%87%BAonnx%E6%A8%A1%E5%9E%8B)
+- [数据采集](1.-数据采集)
+- [数据集制作](2.-数据集制作)
+- [yolo模型](3-yolo模型)
+- [训练 & 推理](4.-训练&推理)
+- [导出onnx模型](5.-导出onnx模型)
 - [绘制结果]()
 - [[option]多线程]()
 ---
@@ -61,7 +61,7 @@
   <div align=center><img src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/labeling.png" width="50%" height="50%"></div>
   
 ## 3. yolo模型
-- 下载yolov5.5工程文件([点我下载](https://github.com/ultralytics/yolov5/releases/tag/v5.0)),下载源文件以及选择权重文件，这里选择权重文件为**YOLOv5s**。
+- **下载yolov5.5工程文件**([点我下载](https://github.com/ultralytics/yolov5/releases/tag/v5.0)),下载源文件以及选择权重文件，这里选择权重文件为**YOLOv5s**。
   <!-- Unzip Sources Zip file, In VSCode we can open this project and see:  -->
   解压源文件，在vscode打开工程文件：
   
@@ -69,7 +69,7 @@
   <img name="YOLOv5 Og Project" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/originYOLO.png" width="50%" height="50%">
 </div>
 
-- 配置自己的工程文件:
+- **配置自己的工程文件**:
   - data文件：保存数据文件配置 .yaml 格式，我们需要根据自己的数据集、训练目标，建立自己的data配置文件，这个项目配置文件如下：
     ```yaml
     # train and val data as 1) directory: path/images/, 2) file: path/images.txt, or 3) list: [path1/images/, path2/images/]
@@ -104,12 +104,12 @@
   
   - 下载预训练权重([点我下载](https://github.com/ultralytics/yolov5/releases/tag/v5.0)),添加到工程文件中
     
-  - python环境: 
+- **python环境**: `python>=3.8`
     ```shell
       > pip install -r requirements.txt
     ```
-## 4. 训练 & 推理
-- 修改 ```train.py``` 文件
+## 4. 训练&推理
+- **修改 ```train.py``` 文件**
   主要修改参数：
   ```
     --weights: 下载的预训练权重地址
@@ -134,7 +134,8 @@
       parser.add_argument('--device', default='0', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
       parser.add_argument('--workers', type=int, default=2, help='maximum number of dataloader workers')
   ```
-  **Run!**：运行train.py程序 And **Wait... Get some Tea!**
+- **Run!**：运行train.py程序 And **Wait... Get some Tea!**
+- **Detect!** 如果训练完成。
 ## 5. 导出onnx模型
 
 ## Reference:
