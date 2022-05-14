@@ -1,4 +1,4 @@
-# YOLOv5 detection With C#
+# YOLOv5 Detection with C#
 ---
 **简介:**
 本项目使用YOLOv5s模型，用自己的数据集进行训练，识别LED芯片，并且将网络在C#中通过OpencvSharp的DNN模块进行调用推理，将神经网络嵌入到实际的工程项目中。
