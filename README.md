@@ -17,9 +17,12 @@
 - [[option]多线程]()
 ---
 ## 1. 数据采集
-- 使用实际摄像头进行采集真实的图像，如下：
-![image](https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/datasets.png)
-数量：24 images
+- 使用实际摄像头进行采集真实的图像：
+
+  数量：24 images
+  
+<div align=center><img src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/datasets.png" width="70%" height="70%"></div>
+
 ## 2. 数据集制作
 - **数据集划分**：training:valid:test = 10:1:1
 - **制作标签**：
@@ -43,15 +46,20 @@
   ```txt
   chip
   ```
-  3. 在 data/ 文件处打开CMD、终端，进入python环境
+  3. 在 data/ 文件处打开CMD、终端，如果是使用conda安装的python环境，注意激活环境。
   ```python
-    >>>labelimg data/images/train classes.txt
+    >(conda activate [your-env-name])
+    >labelimg data/images/train classes.txt
   ```
-  可以看见如下图，选择标签格式为yolo，保存路径为 data/labels/train，标签，cost time
-  ![images](https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/labeling.png)
+  可以看见如下图，选择标签格式为yolo，保存路径为 data/labels/train，标签，cost time!
+  
+  <div align=center><img src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/labeling.png" width="50%" height="50%"></div>
   
 ## 3. yolo模型
-
+- 下载yolov5.5工程文件([点我下载](https://github.com/ultralytics/yolov5/releases/tag/v5.0)),下载源文件以及选择权重文件，这里选择权重文件为**YOLOv5s**。
+  <!-- Unzip Sources Zip file, In VSCode we can open this project and see:  -->
+  解压源文件，在vscode打开工程文件：
+  
 ## 4. 训练 & 推理
 
 ## 5. 导出onnx模型
