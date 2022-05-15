@@ -8,22 +8,22 @@
 
 ---
 **目录：**
-- [数据采集](1.-数据采集)
-- [数据集制作](2.-数据集制作)
-- [yolo模型](3-yolo模型)
-- [训练 & 推理](4.-训练&推理)
-- [导出onnx模型](5.-导出onnx模型)
-- [绘制结果]()
+- [数据采集](#1-数据采集)
+- [数据集制作](#2-数据集制作)
+- [yolo模型](#3-yolo模型)
+- [训练及推理](#4-训练及推理)
+- [导出onnx模型](#5-导出onnx模型)
+- [CSharp中调用onnx模型](#6-csharp中调用onnx模型)
 - [[option]多线程]()
 ---
-## 1. 数据采集
+## 1 数据采集 
 - 使用实际摄像头进行采集真实的图像：
 
   数量：24 images
   
 <div align=center><img src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/datasets.png" width="70%" height="70%"></div>
 
-## 2. 数据集制作
+## 2 数据集制作
 - **数据集划分**：training:valid:test = 10:1:1
 - **制作标签**：
   工具：[labelImg](https://github.com/tzutalin/labelImg)
@@ -60,7 +60,9 @@
   
   <div align=center><img src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/labeling.png" width="50%" height="50%"></div>
   
-## 3. yolo模型
+## 3 yolo模型
+- **什么是YOLOv模型？** see [Blog,有很多大佬写的优秀的博客，我的暂时还没写，but I will write it soon]()
+
 - **下载yolov5.5工程文件**([点我下载](https://github.com/ultralytics/yolov5/releases/tag/v5.0)),下载源文件以及选择权重文件，这里选择权重文件为**YOLOv5s**。
   <!-- Unzip Sources Zip file, In VSCode we can open this project and see:  -->
   解压源文件，在vscode打开工程文件：
@@ -108,7 +110,7 @@
     ```shell
       > pip install -r requirements.txt
     ```
-## 4. 训练&推理
+## 4 训练及推理
 - **修改 ```train.py``` 文件**
   主要修改参数：
   ```
@@ -169,6 +171,15 @@
     <div align=center>
       <img name="DetectImage" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/detectImg.jpg" width="60%" height="60%"></div>
     
-## 5. 导出onnx模型
+    可以看到，尽管使用的数据集合小，但仍表现不错，只一张图片，在我的电脑(Intel i7-8565U)上用CPU上推理0.08s,画图,0.11s左右。
+## 5 导出onnx模型
+- YOLOv5模型概述
+- 修改工程文件中的切片操作
+- 把结果输出的三个特征图concat成二维的张量
+- Output ONNX 模型！
+
+## 6 CSharp中调用onnx模型
+(opencvsharp.dnn)
 
 ## Reference:
+  [1] [YOLOv5 Document](https://docs.ultralytics.com/).
