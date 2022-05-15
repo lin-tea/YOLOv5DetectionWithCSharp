@@ -134,12 +134,14 @@
       parser.add_argument('--device', default='0', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
       parser.add_argument('--workers', type=int, default=2, help='maximum number of dataloader workers')
   ```
-- **Run!**：运行train.py程序 And **Wait... Get some Tea!**
-训练结束后：会在当前路径下，生成run/train/文件夹输出训练结果、权重
+- **Run!**：运行`train.py`程序 And **Wait... Get yourself some Tea and hear win~win~win!**
+
+   训练结束后：会在当前路径下，生成```run/train/```文件夹输出训练结果、权重:
    <div align=center>
-  <img name="YOLOv5 Og Project" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/%E8%AE%AD%E7%BB%83%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C.png" width="50%" height="50%">
-</div>
-- **Detect!** 如果训练完成。
+    <img name="TrainOutputFile" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/TrainOutput.png" width="70%" height="70%"></div>
+
+   权重保存在```./run/train/weight/```中，你将可以看到`best.pt`和`last.pt`两个pt模型文件。
+- **Detect!** 
 ## 5. 导出onnx模型
 
 ## Reference:
