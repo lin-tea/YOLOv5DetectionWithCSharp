@@ -141,7 +141,7 @@
     <img name="TrainOutputFile" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/TrainOutput.png" width="70%" height="70%"></div>
 
    权重保存在```./run/train/weight/```中，你将可以看到`best.pt`和`last.pt`两个pt模型文件。
-- **Detect!**: 跟训练时类似，打开`detect.py`文件，同样需要修改一些参数：
+- **Detect!**: 跟训练时类似，打开`detect.py`文件，同样需要修改一些参数，然后直接run就行：
 
     ```
       --weight   ;训练后的`.pt`权重文件
