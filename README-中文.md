@@ -1,4 +1,4 @@
-# YOLOv5 Detection with C#
+# YOLOv5.5 Detection with C#
 ---
 **简介:**
 本项目使用YOLOv5s模型，用自己的数据集进行训练，识别LED芯片，并且将网络在C#中通过OpencvSharp的DNN模块进行调用推理，将神经网络嵌入到实际的工程项目中。  
@@ -128,8 +128,7 @@
       parser.add_argument('--device', default='0', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
       parser.add_argument('--workers', type=int, default=2, help='maximum number of dataloader workers')
   ```
-- **Run!**：运行`train.py`程序 And **Wait... Get yourself some Tea and hear win~win~win!**
-
+- **Run!**：运行`train.py`程序 And **Wait... Get yourself some Tea 🍵and hear win~win~win!**
    训练结束后：会在当前路径下，生成```run/train/```文件夹输出训练结果、权重:
    <div align=center>
     <img name="TrainOutputFile" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/TrainOutput.png" width="70%" height="70%"></div>
@@ -159,11 +158,29 @@
     <div align=center>
       <img name="DetectImage" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/detectImg.jpg" width="60%" height="60%"></div>  
     可以看到，尽管使用的数据集合小，但仍表现不错，只一张图片，在我的电脑(Intel i7-8565U)上用CPU上推理0.08s,画图,0.11s左右。
-## 5 导出onnx模型
-- YOLOv5模型概述
-- 修改工程文件中的切片操作
-- 把结果输出的三个特征图concat成二维的张量
-- Output ONNX 模型！
+## 5 导出onnx模型  
+- **YOLOv5模型概述**: YOLOv5.5在三种不同的大小的特征图进行目标检测，以每一个特征图的pixie为中心，用三种不同长宽比的anchor进行预测，原本的网络输出对对应每一个特征图上的每一个像素，输出一个预测向量{x,y,h,w,confidence,[classify results]}，长度为`4+1+num of classes`。`detect`用confidence以及nms算法对各种预测锚框进行筛选。
+  - 对于预测结果的目标框回归：根据工程文件中`model/yolo.py/`文件中的`Detect.forward()`部分，其代码如下:  
+    ```python []
+        for i in range(self.nl):
+            x[i] = self.m[i](x[i])  # conv
+            bs, _, ny, nx = x[i].shape  # x(bs,255,20,20) to x(bs,3,20,20,85)
+            x[i] = x[i].view(bs, self.na, self.no, ny, nx).permute(0, 1, 3, 4, 2).contiguous()
+
+            if not self.training:  # inference
+                if self.grid[i].shape[2:4] != x[i].shape[2:4]:
+                    self.grid[i] = self._make_grid(nx, ny).to(x[i].device)
+
+                y = x[i].sigmoid()
+                y[..., 0:2] = (y[..., 0:2] * 2. - 0.5 + self.grid[i]) * self.stride[i]  # xy
+                y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]  # wh
+                z.append(y.view(bs, -1, self.no))
+        return x if self.training else (torch.cat(z, 1), x)
+    ```  
+    ![1](http://latex.codecogs.com/svg.latex?\begin{cases}x=(2Sigmoid(x)-0.5+c)*coef\\\\y=(2Sigmoid(y)-0.5+c)*coef\\\\h=Sigmoid(h)\\\\\end{cases})
+- **修改工程文件中的切片操作**
+- **把结果输出的三个特征图concat成二维的张量**
+- **Output ONNX 模型！**
 
 ## 6 CSharp中调用onnx模型
   **tool**: `opencvsharp.dnn)`
