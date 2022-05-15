@@ -135,6 +135,10 @@
       parser.add_argument('--workers', type=int, default=2, help='maximum number of dataloader workers')
   ```
 - **Run!**：运行train.py程序 And **Wait... Get some Tea!**
+训练结束后：会在当前路径下，生成run/train/文件夹输出训练结果、权重
+   <div align=center>
+  <img name="YOLOv5 Og Project" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/%E8%AE%AD%E7%BB%83%E8%BE%93%E5%87%BA%E7%BB%93%E6%9E%9C.png" width="50%" height="50%">
+</div>
 - **Detect!** 如果训练完成。
 ## 5. 导出onnx模型
 
