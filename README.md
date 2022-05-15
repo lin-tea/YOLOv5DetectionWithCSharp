@@ -141,7 +141,34 @@
     <img name="TrainOutputFile" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/TrainOutput.png" width="70%" height="70%"></div>
 
    权重保存在```./run/train/weight/```中，你将可以看到`best.pt`和`last.pt`两个pt模型文件。
-- **Detect!** 
+- **Detect!**: 跟训练时类似，打开`detect.py`文件，同样需要修改一些参数：
+
+    ```
+      --weight   ;训练后的`.pt`权重文件
+      --source   ;推理图片或者视频
+      --img-size ;模型输入图片大小
+      [optional] --conf-thres  ;置信度
+      [optional] --iou-thres   ;iou阈值
+      [optional] --device
+    ```
+    
+    修改后如下：
+    
+    ```python
+    if __name__ == '__main__':
+      parser = argparse.ArgumentParser()
+      parser.add_argument('--weights', nargs='+', type=str, default='runs\\train\\exp5\\weights\\best.pt', help='model.pt path(s)')
+      parser.add_argument('--source', type=str, default='yolov5-5.0\\myDatasets2\\chip\\images\\test\\8.jpg', help='source')  # file/folder, 0 for webcam
+      parser.add_argument('--img-size', type=int, default=640, help='inference size (pixels)')
+      parser.add_argument('--conf-thres', type=float, default=0.8, help='object confidence threshold')
+      parser.add_argument('--iou-thres', type=float, default=0.45, help='IOU threshold for NMS')
+      parser.add_argument('--device', default='0', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
+    ```
+    
+    得到结果如下：
+    <div align=center>
+      <img name="DetectImage" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/detectImg.jpg" width="60%" height="60%"></div>
+    
 ## 5. 导出onnx模型
 
 ## Reference:
