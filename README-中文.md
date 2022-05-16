@@ -229,8 +229,69 @@
   
 ## 6 CSharp中调用onnx模型
   **tool**: `opencvsharp.dnn`[Here](https://github.com/shimat/opencvsharp/releases/tag/4.5.3.20211228).   
-            `VS2022`[VS2022](https://visualstudio.microsoft.com/).  
-
+            `VS2022`[VS2022](https://visualstudio.microsoft.com/).    
+- 需要的动态链接库(DLL):
+   `OpencvSharp` 在vs的C#中添加引用，根据.NET版本选择opencv包中的 `opencvsharp.dll`以及`opecvsharp.Extention.dll`，并且把的`OpenCvSharp-4.5.3-20211228/NativeLib/win/x64/OpenCvSharpExtern.dll"`复制到vs工程文件的debug、release文件中。  
+  - 在C#文件中引用:  
+  ```c#
+    using OpenCvSharp;
+    using OpenCvSharp.Dnn;
+  ```
+- **现在，创建直接的yolo类吧!**:
+  - 读取将ONNX文件添加到在工程文件中与/bin/文件同一个父目录下，创建/Resource/文件，保存onnx网络文件：
+  ```c#
+        /// <summary>
+        /// 读取onnx模型
+        /// </summary>
+        /// <param name="path">网络文件路径</param>
+        /// <returns></returns>
+        public bool readModel(string path)
+        {
+            try
+            {
+                net = Net.ReadNetFromONNX(path);  //读取网络
+                isReadSuccess = true;
+            }
+            catch (Exception)
+            {
+                net = null;
+                isReadSuccess = false;
+                return false;
+            }
+            net.SetPreferableBackend(Backend.DEFAULT);  //CPU运行
+            net.SetPreferableTarget(Target.CPU);
+            return true;
+        }
+  ```  
+  - 设置各种属性:
+  ```c#
+        private  Net net;  //网络
+        public bool isReadSuccess = false;
+        /// <summary>
+        /// yolov5网络参数
+        /// </summary>
+        // 1. anchors 锚框
+        //      由于采样的图片长宽比不大，故直接用原始锚框大小
+        //      对于3种不同特征图的锚框，对于每一个特征图有3种锚框
+        //      小特征图，用大的锚框可以搜索更大的物体，而大特征图用小的锚框可以搜索更小的物体
+        float [,] netAnchors = new float[3,6]{
+        { 10.0F, 13.0F, 16.0F, 30.0F, 33.0F, 23.0F }, // 大特征图
+        { 30.0F, 61.0F, 62.0F, 45.0F, 59.0F, 119.0F }, //中特征图
+        { 116.0F, 90.0F, 156.0F, 198.0F, 373.0F, 326.0F}}; //小特征图
+        // 2. stride，锚框的步长
+        //      即对应三种特征图在降维时用的步长，根据这个可以得到特征图的box个数
+        float[] netStride = new float[3] { 8.0F, 16.0F, 32.0F};
+        // 3. 输入图像大小 32倍数
+        //    这里为640x640
+        float netHeight = 640;
+        float netWidth = 640;
+        // 4. 各种初始置信概率(阈值)
+        //    可改
+        float nmsThreshold = 0.45f;  //nms阈值
+        float boxThreshold = 0.5f;  //置信度阈值
+        float classThreshold = 0.45f; //类别阈值
+        List<string> classname = new List<string>{ "chip" };
+  ```  
 ## Reference:
   [1] [YOLOv5 Document](https://docs.ultralytics.com/).  
   [2] What is Anchor? [Anchor Boxes for Object detection](https://stackoverflow.com/questions/70227234/anchor-boxes-for-object-detection).
