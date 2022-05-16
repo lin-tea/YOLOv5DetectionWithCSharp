@@ -177,7 +177,13 @@
                 z.append(y.view(bs, -1, self.no))
         return x if self.training else (torch.cat(z, 1), x)
     ```  
-    ![1](http://latex.codecogs.com/svg.latex?\begin{cases}x=(2Sigmoid(x)-0.5+c)*coef\\\\y=(2Sigmoid(y)-0.5+c)*coef\\\\h=Sigmoid(h)\\\\\end{cases})
+
+    ![1](http://latex.codecogs.com/svg.latex?\begin{cases}x=(2Sigmoid(x)-0.5+c)*stride\\\\y=(2Sigmoid(y)-0.5+r)*stride\\\\h=(2Sigmoid(h))^2*anchor_h\\\\w=(2Sigmoid(w))^2*anchor_w\\\\\end{cases})  
+    - c表示当前位置在特征图上的宽度坐标(即像素坐标)，表示偏移量
+    - r表示当前位置在特征图上的高度坐标(即像素坐标)，表示偏移量
+    - stride，压缩到不同大小的特征图时的使用不同stride
+    - anchor:anchor_h、anchor_w,不同anchor大小参数
+    - tips：参考模型配置文件，anchor={h1,h2,h3,w1,w2,w3},stride={8,16,32}
 - **修改工程文件中的切片操作**
 - **把结果输出的三个特征图concat成二维的张量**
 - **Output ONNX 模型！**
