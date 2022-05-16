@@ -208,15 +208,28 @@
             x[i] = x[i].view(bs, self.na, self.no, ny, nx).permute(0, 1, 3, 4, 2).contiguous()
             x[i] = x[i].view(bs * self.na * ny * nx, self.no).contiguous() # reshape成二维
         return torch.cat(x) #batch进行Concat
-  ```  
-  **通过netron查看onnx模型**，原来输出：展开后输出：  
+  ```    
+- **Output ONNX 模型！**  
+  - **方法**: `model/export.py`   
+  - 同样修改一些配置:  
+  ```python
+    if __name__ == '__main__':
+      parser = argparse.ArgumentParser()
+      parser.add_argument('--weights', type=str, default='runs\\train\\exp2\\weights\\best.pt', help='weights path')  # from yolov5/models/
+      parser.add_argument('--img-size', nargs='+', type=int, default=[640, 640], help='image size')  # height, width
+      parser.add_argument('--batch-size', type=int, default=1, help='batch size')
+      parser.add_argument('--dynamic', action='store_true', help='dynamic ONNX axes')
+      parser.add_argument('--grid', action='store_true', help='export Detect() layer grid')
+      parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
+  ```   
+  - Run! 然后onnx文件会保存到与`.pt` 文件相同文件目录下。   
+  - **通过netron查看onnx模型**，原来输出：展开后输出：  
    <div class="content_img" align=center>
-      <img name="OriginONNXOutput" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/OriginONNXOutput.png" width="300" height="300">     <img name="FlattenOutput" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/FlattenOutput.png" width="300" height="300"><div>Left:Origin & Right:Flattened</div>
- 
-- **Output ONNX 模型！**
+      <img name="OriginONNXOutput" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/OriginONNXOutput.png" width="300" height="300">     <img name="FlattenOutput" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/FlattenOutput.png" width="300" height="300"><div>Left:Origin & Right:Flattened</div>  
   
 ## 6 CSharp中调用onnx模型
-  **tool**: `opencvsharp.dnn`[Here](https://github.com/shimat/opencvsharp/releases/tag/4.5.3.20211228).  
+  **tool**: `opencvsharp.dnn`[Here](https://github.com/shimat/opencvsharp/releases/tag/4.5.3.20211228).   
+            `VS2022`[VS2022](https://visualstudio.microsoft.com/).  
 
 ## Reference:
   [1] [YOLOv5 Document](https://docs.ultralytics.com/).  
