@@ -98,6 +98,7 @@
     ```
   
   - 下载预训练权重([点我下载](https://github.com/ultralytics/yolov5/releases/tag/v5.0)),添加到工程文件中  
+  - 训练配置文件：参考 `data/hyp.scratch.yaml` 文件,可设置如训练时的图像增强、iou阈值、Mixup概率等。  
 - **python环境**: `python>=3.8`
     ```shell
       > pip install -r requirements.txt
