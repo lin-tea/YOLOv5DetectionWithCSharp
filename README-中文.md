@@ -17,11 +17,11 @@
 ---
 ## 1 数据采集 
 - 使用实际摄像头进行采集真实的图像：  
-  数量：24 images  
+  数量：42 images  
 <div align=center><img src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/datasets.png" width="70%" height="70%"></div>
 
 ## 2 数据集制作
-- **数据集划分**：training:valid:test = 10:1:1
+- **数据集划分**：training:valid:test = 8:1:2
 - **制作标签**：
   工具：[labelImg](https://github.com/tzutalin/labelImg)
   标签文件: ```name.txt```，每一行为 类别 中心x 中心y 宽 高,名字name和图片 name.jpg 对应。
