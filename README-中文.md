@@ -194,7 +194,21 @@
       stride = s2: `1,(5+num of classes),3(h/s2),3(w/s2)`  
       stride = s3: `1,(5+num of classes),3(h/s3),3(w/s3)`  
   - 修改：flatten成二维，对stride、anchor在(5+num of classes)维度上拼接，对于yolov5.5s最终输出格式为：25200x(5+num of classes)  
-  - (当然也可以不修改，只是后续对结果处理需进行一定的改变)  
+  - (当然也可以不修改，只是后续对结果处理需进行一定的改变)    
+  对`model/yolo.py`中的**Detect类的forward()**修改如下：
+  ```python
+        def forward(self, x):
+        #导出onnx到opencv
+        x = x.copy()  # for profiling
+        z = []  # inference output
+        self.training |= self.export
+        for i in range(self.nl):
+            x[i] = self.m[i](x[i])  # conv
+            bs, _, ny, nx = x[i].shape  # x(bs,255,20,20) to x(bs,3,20,20,85)
+            x[i] = x[i].view(bs, self.na, self.no, ny, nx).permute(0, 1, 3, 4, 2).contiguous()
+            x[i] = x[i].view(bs * self.na * ny * nx, self.no).contiguous() # reshape成二维
+        return torch.cat(x) #batch进行Concat
+  ```  
 - **Output ONNX 模型！**
   
 ## 6 CSharp中调用onnx模型
