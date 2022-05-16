@@ -132,7 +132,7 @@
 - **Run!**：运行`train.py`程序 And **Wait... Get yourself some Tea 🍵and hear win~win~win!**
    训练结束后：会在当前路径下，生成```run/train/```文件夹输出训练结果、权重:
    <div align=center>
-    <img name="TrainOutputFile" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/TrainOutput.png" width="70%" height="70%"></div>
+    <img name="TrainOutputFile" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/train_Output.png" width="70%" height="70%"></div>
 
    权重保存在```./run/train/weight/```中，你将可以看到`best.pt`和`last.pt`两个pt模型文件。
 - **Detect!**: 跟训练时类似，打开`detect.py`文件，同样需要修改一些参数，然后直接run就行：  
@@ -189,8 +189,10 @@
 
 - **把结果输出的三个特征图concat成二维的张量**  
   - 正常yolov5输出结构:   
-      假设网络输入大小为[h,w],特征图步长stride={s1,s2,s3}，anchor数量为3:    
-      `1x(5+num of classes)x3((h/s1)x(w/s1)+(h/s2)x(w/s2)+(h/s3)x(w/s3))`  
+      假设网络输入大小为[h,w],特征图步长stride={s1,s2,s3}，anchor数量为3，输出结果如下：    
+      stride = s1: `1,(5+num of classes),3(h/s1),3(w/s1)`  
+      stride = s2: `1,(5+num of classes),3(h/s2),3(w/s2)`  
+      stride = s3: `1,(5+num of classes),3(h/s3),3(w/s3)`  
   - 修改：flatten成二维，对stride、anchor在(5+num of classes)维度上拼接，对于yolov5.5s最终输出格式为：25200x(5+num of classes)  
   - (当然也可以不修改，只是后续对结果处理需进行一定的改变)  
 - **Output ONNX 模型！**
