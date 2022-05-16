@@ -185,11 +185,17 @@
     - anchor:anchor_h、anchor_w,不同anchor大小参数
     - tips：参考模型配置文件，anchor={h1,h2,h3,w1,w2,w3},stride={8,16,32}
 - **修改工程文件中的切片操作**
-- **把结果输出的三个特征图concat成二维的张量**
-- **Output ONNX 模型！**
 
+- **把结果输出的三个特征图concat成二维的张量**  
+  - 正常yolov5输出结构:   
+      假设网络输入大小为[h,w],特征图步长stride={s1,s2,s3}，anchor数量为3:    
+      `1x(5+num of classes)x3((h/s1)x(w/s1)+(h/s2)x(w/s2)+(h/s3)x(w/s3))`  
+  - 修改：flatten成二维，对stride、anchor在(5+num of classes)维度上拼接，对于yolov5.5s最终输出格式为：25200x(5+num of classes)  
+  - (当然也可以不修改，只是后续对结果处理需进行一定的改变)  
+- **Output ONNX 模型！**
+  
 ## 6 CSharp中调用onnx模型
-  **tool**: `opencvsharp.dnn)`
+  **tool**: `opencvsharp.dnn`[Here](https://github.com/shimat/opencvsharp/releases/tag/4.5.3.20211228).  
 
 ## Reference:
   [1] [YOLOv5 Document](https://docs.ultralytics.com/).  
