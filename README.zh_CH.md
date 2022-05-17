@@ -185,7 +185,6 @@
     - stride，压缩到不同大小的特征图时的使用不同stride
     - anchor:anchor_h、anchor_w,不同anchor大小参数
     - tips：参考模型配置文件，anchor={h1,h2,h3,w1,w2,w3},stride={8,16,32}
-- **修改工程文件中的切片操作**
 
 - **把结果输出的三个特征图concat成二维的张量**  
   - 正常yolov5输出结构:   
@@ -265,33 +264,125 @@
   ```  
   - 设置各种属性:
   ```c#
-        private  Net net;  //网络
-        public bool isReadSuccess = false;
-        /// <summary>
-        /// yolov5网络参数
-        /// </summary>
-        // 1. anchors 锚框
-        //      由于采样的图片长宽比不大，故直接用原始锚框大小
-        //      对于3种不同特征图的锚框，对于每一个特征图有3种锚框
-        //      小特征图，用大的锚框可以搜索更大的物体，而大特征图用小的锚框可以搜索更小的物体
-        float [,] netAnchors = new float[3,6]{
-        { 10.0F, 13.0F, 16.0F, 30.0F, 33.0F, 23.0F }, // 大特征图
-        { 30.0F, 61.0F, 62.0F, 45.0F, 59.0F, 119.0F }, //中特征图
-        { 116.0F, 90.0F, 156.0F, 198.0F, 373.0F, 326.0F}}; //小特征图
-        // 2. stride，锚框的步长
-        //      即对应三种特征图在降维时用的步长，根据这个可以得到特征图的box个数
-        float[] netStride = new float[3] { 8.0F, 16.0F, 32.0F};
-        // 3. 输入图像大小 32倍数
-        //    这里为640x640
-        float netHeight = 640;
-        float netWidth = 640;
-        // 4. 各种初始置信概率(阈值)
-        //    可改
-        float nmsThreshold = 0.45f;  //nms阈值
-        float boxThreshold = 0.5f;  //置信度阈值
-        float classThreshold = 0.45f; //类别阈值
-        List<string> classname = new List<string>{ "chip" };
-  ```  
+      private  Net net;  //网络
+      public bool isReadSuccess = false;
+      /// <summary>
+      /// yolov5网络参数
+      /// </summary>
+      // 1. anchors 锚框，后面回归需要用到
+      //      由于采样的图片长宽比不大，故直接用原始锚框大小
+      //      对于3种不同特征图的锚框，对于每一个特征图有3种锚框
+      //      小特征图，用大的锚框可以搜索更大的物体，而大特征图用小的锚框可以搜索更小的物体
+      float [,] netAnchors = new float[3,6]{
+      { 10.0F, 13.0F, 16.0F, 30.0F, 33.0F, 23.0F }, // 大特征图
+      { 30.0F, 61.0F, 62.0F, 45.0F, 59.0F, 119.0F }, //中特征图
+      { 116.0F, 90.0F, 156.0F, 198.0F, 373.0F, 326.0F}}; //小特征图
+      // 2. stride，锚框的步长
+      //      即对应三种特征图在降维时用的步长，根据这个可以得到特征图的box个数
+      float[] netStride = new float[3] { 8.0F, 16.0F, 32.0F};
+      // 3. 输入图像大小 32倍数
+      //    这里为640x640
+      float netHeight = 640;
+      float netWidth = 640;
+      // 4. 各种初始置信概率(阈值)
+      //    可改
+      float nmsThreshold = 0.45f;  //nms阈值
+      float boxThreshold = 0.5f;  //置信度阈值
+      float classThreshold = 0.45f; //类别阈值
+      List<string> classname = new List<string>{ "chip" };
+  ```   
+- **推理Detect!** ，在C#中我们只需应用网络进行推理即可
+  - 网络规定的图像大小 `[640,640]`，但我们实际的图片并不是相同大小，因此，我们需要对其输入进行resize，也需要把输出框进行resize；  
+    ```c#
+      // 1) 格式化输入图像，变成 1x3x640x640的tensor，并且归一化，
+      // scaleFactor归一化
+      // swapRB:BGR -> RGB
+      Mat blob = CvDnn.BlobFromImage(ScrImg, scaleFactor:1.0 /255, size:new OpenCvSharp.Size(netWidth,netHeight), mean:new Scalar(0,0,0), swapRB:false,crop:fals);
+      // 2) 高、宽的缩放大小倍率,用于最后输出锚框进行resize，复原到原始图像大小
+      double ratio_h = ScrImg.Rows /netHeight;  // 输入图像的高: 640
+      double ratio_w = ScrImg.Cols / netWidth;  // 输入图像的宽: 640
+    ```  
+  - Inference 向前传播！
+    ```c#
+      // 3) 输入网络
+      //DateTime t1 = DateTime.Now;
+      net.SetInput(blob);
+      // 4) 向前传播 
+      Mat netOutput = net.Forward();  //25200x6
+    ```  
+  - 取出输出结果的每一行，筛选置信率高的，锚框回归，添加为备选框
+    ```c#
+      int r = 0;  // index，第一行
+      List<int> classIds = new List<int>(); //保存好的锚框的分类结果
+      List<float> confidences = new List<float>(); //保存好的锚框的置信
+      List<Rect> bouduary = new List<Rect>();     //保存好的锚框x,y,h,w
+      // 5) 遍历所有预测锚框参数
+      //    注：网络的输出格式已经将3个特征图对应的所有box的预测的3种不同锚框，flatten成 二维矩阵
+      //        从大特征图开始的展开；
+      //先按特征图大小进行for遍历
+      for (int s = 0; s < 3; s++)
+      {
+          // 获取box个数
+          int grid_x = (int)(netWidth / netStride[s]);
+          int grid_y = (int)(netHeight / netStride[s]);
+          //MessageBox.Show(grid_x.ToString()); //debug用
+          //MessageBox.Show(grid_y.ToString());
+          // 对每个anchor进行遍历
+          for (int anchor = 0; anchor < 3; anchor++)
+          {
+              // 得到anchor高、宽大小
+              double anchor_w = netAnchors[s, anchor * 2];
+              double anchor_h = netAnchors[s, anchor * 2 + 1];
+              // 对每一个box的预测结果进行遍历
+              for (int j = 0; j < grid_y; j++)
+              {
+                  for (int i = 0; i < grid_x; i++)
+                  {
+                      // 在输出结果中获取对应的box的预测结果 1x6的向量
+                      Mat pMat = netOutput.Row(r);
+                      float[] pdata;
+                      // 变成array，更好用
+                      pMat.GetArray(out pdata);
+                      // 第五个即为置信概率
+                      double box_score = Sigmoid(pdata[4]);
+                      if (box_score > boxThreshold)
+                      {
+                          //++num;
+                          // pdata第六个开始为类别预测的概率，即第五个之后的向量为one-hot输出结果
+                          // classifyOutput保存one-hot输出结果
+                          float[] classifyOutput = pdata.Skip(5).ToArray();   
+                          Mat score = new Mat(1,classname.Count(),MatType.CV_32FC1, classifyOutput); //转成1,类别数的二维Mat
+                          OpenCvSharp.Point classIdpoint = new OpenCvSharp.Point();
+                          double max_class_score;
+                          // 获取最大值及其对应的index即分类的类别id
+                          Cv2.MinMaxLoc(score, out double min_class_score, out max_class_score, out OpenCvSharp.Point minclassIdpoint, out classIdpoint);
+                          // sigmoid得到分类的概率
+                          max_class_score = Sigmoid((float)max_class_score);
+                          if(max_class_score > boxThreshold)
+                          {
+
+                              // 是好的锚框，保存,锚框回归
+                              double x = (Sigmoid(pdata[0]) * 2 - 0.5 + i) * netStride[s];
+                              double y = (Sigmoid(pdata[1]) * 2 - 0.5 + j) * netStride[s];
+                              double w = Math.Pow(Sigmoid(pdata[2]) * 2.0, 2.0) * anchor_w;
+                              double h = Math.Pow(Sigmoid(pdata[3]) * 2.0, 2.0) * anchor_h;
+                              //过滤面积太小的
+                              //if (w >=45 && h >=45)
+                              //{
+                              //    int left = (int)((x - 0.5 * w) * ratio_w);
+                              //    int top = (int)((y - 0.5 * h) * ratio_h);
+                              //    classIds.Add(classIdpoint.X);
+                              //    confidences.Add((float)max_class_score);
+                              //    bouduary.Add(new Rect(left, top, (int)(w * ratio_w), (int)(h * ratio_h)));
+                              //}
+                          }
+                      }
+                      ++r;
+                  }
+              }
+          }
+      }
+    ```
 ## Reference:
   [1] [YOLOv5 Document](https://docs.ultralytics.com/).  
   [2] What is Anchor? [Anchor Boxes for Object detection](https://stackoverflow.com/questions/70227234/anchor-boxes-for-object-detection).
