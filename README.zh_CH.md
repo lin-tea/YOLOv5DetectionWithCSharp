@@ -382,7 +382,24 @@
               }
           }
       }
-    ```
+    ```  
+  - Now,使用NMS对备选框进行筛选:
+   ```c#
+    // 保存最终的最好的锚框在备选框中的index
+    int[] final_idx;
+    // nms，非极大值抑制,有很多预测锚框是重叠的，故用nms可得到其中最好的一个锚框
+    CvDnn.NMSBoxes(bouduary, confidences, classThreshold, nmsThreshold, out final_idx);
+    // 根据最终锚框的idx，保存结果
+    for(int i = 0; i < final_idx.Length; i++)
+    {
+        int idx = final_idx[i];
+        output temp;
+        temp.id = classIds[idx];   // 修改地方 应该获取类别而不是index
+        temp.confidence = confidences[idx]; 
+        temp.box = bouduary[idx]; 
+        Results.Add(temp);
+    }
+   ```
 ## Reference:
   [1] [YOLOv5 Document](https://docs.ultralytics.com/).  
   [2] What is Anchor? [Anchor Boxes for Object detection](https://stackoverflow.com/questions/70227234/anchor-boxes-for-object-detection).
