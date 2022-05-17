@@ -399,7 +399,39 @@
         temp.box = bouduary[idx]; 
         Results.Add(temp);
     }
-   ```
+   ```  
+ - 用opencv在原图上画出锚框：
+ ```c#
+     for(int i = 0; i < res.Count; i++)
+    {
+        int left=res[i].box.X,top = res[i].box.Y;
+        Cv2.Rectangle(img, res[i].box, new Scalar(0, 255, 0), thickness: 1, LineTypes.Link8);
+        Cv2.PutText(img, (i+1).ToString(), new OpenCvSharp.Point(left, top), HersheyFonts.HersheySimplex, fontScale: 0.35, color: new Scalar(0, 0, 255), thickness: 1);
+        if (isDrawLedCenter==true)
+        {
+            // 绘制十字标
+            int x = res[i].box.X + res[i].box.Width / 2, y = res[i].box.Y + res[i].box.Height / 2;
+            OpenCvSharp.Point py1 = new OpenCvSharp.Point(x,y-5);
+            OpenCvSharp.Point py2 = new OpenCvSharp.Point(x, y + 5);
+            OpenCvSharp.Point px1 = new OpenCvSharp.Point(x-5, y);
+            OpenCvSharp.Point px2 = new OpenCvSharp.Point(x+5, y);
+            Cv2.Line(img, py1, py2, new Scalar(255,0 , 0)); Cv2.Line(img, px1, px2, new Scalar(255, 0, 0));
+        }
+    }
+ ```  
+ 
+ - 输出Output结构：
+ ```c#
+    /// <summary>
+    /// Output数据结构，即为预测锚框参数
+    /// </summary>
+    public struct output
+    {
+        public int id;//结果类别id
+        public float confidence;//结果置信度
+        public Rect box;//矩形框
+    }
+ ```
 ## Reference:
   [1] [YOLOv5 Document](https://docs.ultralytics.com/).  
   [2] What is Anchor? [Anchor Boxes for Object detection](https://stackoverflow.com/questions/70227234/anchor-boxes-for-object-detection).
