@@ -431,7 +431,11 @@
         public float confidence;//结果置信度
         public Rect box;//矩形框
     }
- ```
+ ```  
+ 
+ - 结果：
+ <div align=center>
+      <img name="testCsharp" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/testCsharp.png" width="70%" height="65%"></div>   
 ## Reference:
   [1] [YOLOv5 Document](https://docs.ultralytics.com/).  
   [2] What is Anchor? [Anchor Boxes for Object detection](https://stackoverflow.com/questions/70227234/anchor-boxes-for-object-detection).
