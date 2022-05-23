@@ -58,6 +58,13 @@
   
 ## 3 yolo模型
 - **什么是YOLOv模型？** see [Blog,Search，有很多大佬写的优秀的博客]()  
+- **网络整体结构**  
+   <div align=center>
+  <img name="Struct" src="https://github.com/lin-tea/YOLOv5DetectionWithCSharp/blob/main/Pictures/%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84.png" width="75%" height="50%">
+</div>  
+
+  - 这次目标只有LED芯片，故对于每一个预测框，其预测的向量为 x,y,h,w,p,c，p表示置信概率，c表示预测类别的概率，故其长度为6。  
+
 - **下载yolov5.5工程文件**([点我下载](https://github.com/ultralytics/yolov5/releases/tag/v5.0)),下载源文件以及选择权重文件，这里选择权重文件为**YOLOv5s**。
   <!-- Unzip Sources Zip file, In VSCode we can open this project and see:  -->
   解压源文件，在vscode打开工程文件：  
