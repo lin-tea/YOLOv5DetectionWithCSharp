@@ -1,0 +1,17 @@
+# PASCAL VOC dataset http://host.robots.ox.ac.uk/pascal/VOC/
+# Train command: python train.py --data voc.yaml
+# Default dataset location is next to /yolov5:
+#   /parent_folder
+#     /VOC
+#     /yolov5
+
+
+# train and val data as 1) directory: path/images/, 2) file: path/images.txt, or 3) list: [path1/images/, path2/images/]
+train: yolov5-5.0/datasets/images/train
+val: yolov5-5.0/datasets/images/valid
+
+# number of classes
+nc: 1
+
+# class names
+names: [ 'chip' ]
